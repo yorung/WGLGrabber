@@ -47,6 +47,10 @@ void Create()
 	void* gldei = wglGetProcAddress("glDrawElementsIndirect");
 	void* glen1 = glEnable;
 	void* glen2 = wglGetProcAddress("glEnable");
+	GLuint (*glCreateProgram)(void);
+	glCreateProgram = (GLuint (*)(void))wglGetProcAddress("glCreateProgram");
+	GLuint (*glCreateShader)(GLenum type);
+	glCreateShader = (GLuint(*)(GLenum type))wglGetProcAddress("glCreateShader");
 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 	static const int attribList[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
@@ -75,28 +79,25 @@ void Destroy()
 
 void Grab()
 {
-//	char* h = (char*)LoadFile("glheaders/wglext.h");
+	//	char* h = (char*)LoadFile("glheaders/wglext.h");
 	char* h = (char*)LoadFile("glheaders/glext.h");
-//	std::regex pattern("wglCreateContextAttribsARB");
-	std::regex pattern("PFN(\\w+)PROC");
+	//	std::regex pattern("wglCreateContextAttribsARB");
+	std::regex pattern("^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(\\w+)\\s*(\\(.*\\))");
 	//	std::regex pattern("PFN[A-Za-Z0-9_]+PROC");
 	std::cmatch match;
-	if (std::regex_search(h, match, pattern)) {
-		for (std::csub_match it : match) {
-			std::string s = it.str();
-			printf("%s\n", s.c_str());
-		}
-	}
 	std::string str = h;
 	auto funcBegin = std::sregex_iterator(str.begin(), str.end(), pattern);
-	auto funcEnd = std::sregex_iterator();
-	int dist = std::distance(funcBegin, funcEnd);
-	for (auto it = funcBegin; it != funcEnd; it++) {
+	auto End = std::sregex_iterator();
+	int dist = std::distance(funcBegin, End);
+	for (auto it = funcBegin; it != End; it++) {
 		std::smatch m = *it;
-		for (std::ssub_match it : m) {
-			printf("%s ", it.str().c_str());
+		if (m.size() < 4) {
+			continue;
 		}
-		printf("\n");
+		printf("%s\n", m.str().c_str());
+		printf("%s %s%s\n", m[1].str().c_str(), m[2].str().c_str(), m[3].str().c_str());
+		printf("%s (*%s)%s\n", m[1].str().c_str(), m[2].str().c_str(), m[3].str().c_str());
+		printf("%s (*)%s\n", m[1].str().c_str(), m[3].str().c_str());
 	}
 	free(h);
 }
