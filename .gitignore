@@ -1,0 +1,11 @@
+Debug/
+Release/
+
+*.suo
+*.user
+*.sdf
+*.opensdf
+*.ipch
+*.bak
+
+glheaders/*.h
