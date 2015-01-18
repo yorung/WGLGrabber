@@ -73,9 +73,39 @@ void Destroy()
 	}
 }
 
+void Grab()
+{
+//	char* h = (char*)LoadFile("glheaders/wglext.h");
+	char* h = (char*)LoadFile("glheaders/glext.h");
+//	std::regex pattern("wglCreateContextAttribsARB");
+	std::regex pattern("PFN(\\w+)PROC");
+	//	std::regex pattern("PFN[A-Za-Z0-9_]+PROC");
+	std::cmatch match;
+	if (std::regex_search(h, match, pattern)) {
+		for (std::csub_match it : match) {
+			std::string s = it.str();
+			printf("%s\n", s.c_str());
+		}
+	}
+	std::string str = h;
+	auto funcBegin = std::sregex_iterator(str.begin(), str.end(), pattern);
+	auto funcEnd = std::sregex_iterator();
+	int dist = std::distance(funcBegin, funcEnd);
+	for (auto it = funcBegin; it != funcEnd; it++) {
+		std::smatch m = *it;
+		for (std::ssub_match it : m) {
+			printf("%s ", it.str().c_str());
+		}
+		printf("\n");
+	}
+	free(h);
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	GoMyDir();
 	Create();
+	Grab();
 	Destroy();
 	return 0;
 }

@@ -7,9 +7,11 @@
 
 #include <stdio.h>
 #include <tchar.h>
-
+#include <regex>
 #include <windows.h>
+#include <assert.h>
 
 #include <GL/gl.h>
 
 #include "glheaders/wglext.h"
+#include "helper.h"
