@@ -7,6 +7,24 @@
 
 HGLRC hglrc;
 
+struct GLFunc
+{
+	GLFunc(){}
+	GLFunc(const GLFunc& r) {
+		*this = r;
+	}
+	const GLFunc& operator=(const GLFunc& r) {
+		name = r.name;
+		decl = r.decl;
+		caster = r.caster;
+		return *this;
+	}
+	std::string name;
+	std::string decl;
+	std::string caster;
+};
+std::vector<GLFunc> glFuncs;
+
 static void err(char *msg)
 {
 	puts(msg);
@@ -89,15 +107,17 @@ void Grab()
 	auto funcBegin = std::sregex_iterator(str.begin(), str.end(), pattern);
 	auto End = std::sregex_iterator();
 	int dist = std::distance(funcBegin, End);
+	printf("%d functions found\n", dist);
 	for (auto it = funcBegin; it != End; it++) {
 		std::smatch m = *it;
 		if (m.size() < 4) {
 			continue;
 		}
-		printf("%s\n", m.str().c_str());
-		printf("%s %s%s\n", m[1].str().c_str(), m[2].str().c_str(), m[3].str().c_str());
-		printf("%s (*%s)%s\n", m[1].str().c_str(), m[2].str().c_str(), m[3].str().c_str());
-		printf("%s (*)%s\n", m[1].str().c_str(), m[3].str().c_str());
+		GLFunc func;
+		func.name = m[2].str();
+		func.decl = m[1].str() + " " + m[2].str() + m[3].str();
+		func.caster = m[1].str() + " (*)" + m[3].str();
+		glFuncs.push_back(func);
 	}
 	free(h);
 }
