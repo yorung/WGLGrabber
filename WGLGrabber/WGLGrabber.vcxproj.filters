@@ -18,10 +18,7 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="helper.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WGLGrabberGen.h">
+    <ClInclude Include="..\helper\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +26,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="helper_win.cpp">
+    <ClCompile Include="WGLGrabber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WGLGrabber.cpp">
+    <ClCompile Include="..\helper\helper_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
