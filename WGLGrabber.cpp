@@ -108,6 +108,7 @@ void Grab()
 	auto End = std::sregex_iterator();
 	int dist = std::distance(funcBegin, End);
 	printf("%d functions found\n", dist);
+	int i = 0;
 	for (auto it = funcBegin; it != End; it++) {
 		std::smatch m = *it;
 		if (m.size() < 4) {
@@ -115,11 +116,33 @@ void Grab()
 		}
 		GLFunc func;
 		func.name = m[2].str();
-		func.decl = m[1].str() + " " + m[2].str() + m[3].str();
+		func.decl = m[1].str() + " (*" + m[2].str() + ")" + m[3].str();
 		func.caster = m[1].str() + " (*)" + m[3].str();
 		glFuncs.push_back(func);
+		printf("\r%d/%d", i++, dist);
 	}
+	printf("\n");
 	free(h);
+}
+
+void CodeGen()
+{
+	std::string hdr, cpp;
+	hdr = "#include <GL/gl.h>\r\n";
+	for (auto it : glFuncs) {
+		hdr += std::string("extern ") + it.decl + ";\r\n";
+	}
+	puts(hdr.c_str());
+
+	cpp = "#include \"WGLGrabberGen.h\"\r\n";
+	cpp += "void WGLGrabberInit()\r\n";
+	cpp += "{\r\n";
+	for (auto it : glFuncs) {
+		cpp += std::string("\t") + it.name + " = (" + it.caster + ")wglGetProcAddress(\"" + it.name + "\");\r\n";
+	}
+	cpp += "}\r\n";
+
+	puts(cpp.c_str());
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -127,6 +150,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	GoMyDir();
 	Create();
 	Grab();
+	CodeGen();
 	Destroy();
 	return 0;
 }
