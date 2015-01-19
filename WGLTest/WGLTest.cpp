@@ -13,9 +13,8 @@ static void err(char *msg)
 	puts(msg);
 }
 
-void CreateWGL()
+void CreateWGL(HWND hWnd)
 {
-	HWND hWnd = GetDesktopWindow();
 	HDC hdc = GetDC(hWnd);
 
 	PIXELFORMATDESCRIPTOR pfd;
@@ -76,11 +75,16 @@ void CreateWGL()
 	void WGLGrabberInit();
 	WGLGrabberInit();
 END:
-	ReleaseDC(hWnd, hdc);
+//	ReleaseDC(hWnd, hdc);	// do not release dc; WGL using it
+	return;	// do nothing
 }
 
-void DestroyWGL()
+void DestroyWGL(HWND hWnd)
 {
+	HDC hdc = wglGetCurrentDC();
+	if (hdc) {
+		ReleaseDC(hWnd, hdc);
+	}
 	wglMakeCurrent(nullptr, nullptr);
 	if (hglrc) {
 		wglDeleteContext(hglrc);
@@ -89,12 +93,55 @@ void DestroyWGL()
 }
 
 
+class App {
+public:
+	void Update();
+	void Draw();
+};
+
+App app;
+void App::Update()
+{
+
+}
+void App::Draw()
+{
+	glClearColor(1, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	SwapBuffers(wglGetCurrentDC());
+}
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
+HWND hWnd;
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+
+// WindowMessage
+static BOOL ProcessWindowMessage(){
+	MSG msg;
+	for (;;){
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
+			if (msg.message == WM_QUIT){
+				return FALSE;
+			}
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		BOOL active = !IsIconic(hWnd) && GetForegroundWindow() == hWnd;
+
+		if (!active){
+			WaitMessage();
+			continue;
+		}
+
+		return TRUE;
+	}
+}
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -111,7 +158,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
  	// TODO: Place code here.
-	MSG msg;
 	HACCEL hAccelTable;
 
 	// Initialize global strings
@@ -127,20 +173,18 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WGLTEST));
 
-	CreateWGL();
+	CreateWGL(hWnd);
 
 	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+	for (;;) {
+		if (!ProcessWindowMessage()) {
+			break;
 		}
+		app.Update();
+		app.Draw();
+		Sleep(1);
 	}
-	DestroyWGL();
-
-	return (int) msg.wParam;
+	return 0;
 }
 
 
@@ -183,8 +227,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-
    hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
@@ -240,6 +282,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// TODO: Add any drawing code here...
 		EndPaint(hWnd, &ps);
 		break;
+	case WM_CLOSE:
+		DestroyWGL(hWnd);
+		DestroyWindow(hWnd);
+		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
