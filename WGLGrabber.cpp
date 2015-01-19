@@ -69,6 +69,7 @@ void Create()
 	glCreateProgram = (GLuint (*)(void))wglGetProcAddress("glCreateProgram");
 	GLuint (*glCreateShader)(GLenum type);
 	glCreateShader = (GLuint(*)(GLenum type))wglGetProcAddress("glCreateShader");
+
 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 	static const int attribList[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
@@ -78,10 +79,19 @@ void Create()
 		0,
 	};
 	HGLRC hglrcNew = wglCreateContextAttribsARB(hdc, 0, attribList);
+
+	wglMakeCurrent(nullptr, nullptr);
 	if (hglrcNew) {
 		wglDeleteContext(hglrc);
 		hglrc = hglrcNew;
 	}
+	if (!wglMakeCurrent(hdc, hglrc)){
+		err("wglMakeCurrent failed.");
+		goto END;
+	}
+
+	void WGLGrabberInit();
+	WGLGrabberInit();
 END:
 	ReleaseDC(hWnd, hdc);
 }
@@ -95,7 +105,7 @@ void Destroy()
 	}
 }
 
-void Grab()
+void ParseHeader()
 {
 	//	char* h = (char*)LoadFile("glheaders/wglext.h");
 	char* h = (char*)LoadFile("glheaders/glext.h");
@@ -128,13 +138,19 @@ void Grab()
 void CodeGen()
 {
 	std::string hdr, cpp;
-	hdr = "#include <GL/gl.h>\r\n";
+	hdr += "#include <windows.h>\r\n";
+	hdr += "#include <gl/gl.h>\r\n";
+	hdr += "#include \"glheaders/glext.h\"\r\n";
 	for (auto it : glFuncs) {
 		hdr += std::string("extern ") + it.decl + ";\r\n";
 	}
-	puts(hdr.c_str());
+	SaveFile("WGLGrabberGen.h", (uint8_t*)hdr.c_str(), hdr.size());
 
 	cpp = "#include \"WGLGrabberGen.h\"\r\n";
+	for (auto it : glFuncs) {
+		cpp += it.decl + ";\r\n";
+	}
+
 	cpp += "void WGLGrabberInit()\r\n";
 	cpp += "{\r\n";
 	for (auto it : glFuncs) {
@@ -142,14 +158,14 @@ void CodeGen()
 	}
 	cpp += "}\r\n";
 
-	puts(cpp.c_str());
+	SaveFile("WGLGrabberGen.cpp", (uint8_t*)cpp.c_str(), cpp.size());
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	GoMyDir();
 	Create();
-	Grab();
+	ParseHeader();
 	CodeGen();
 	Destroy();
 	return 0;
