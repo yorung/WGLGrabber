@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\helper\helper.h" />
+    <ClInclude Include="..\helper\helper_text.h" />
     <ClInclude Include="app.h" />
     <ClInclude Include="matrix_man.h" />
     <ClInclude Include="Resource.h" />

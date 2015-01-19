@@ -5,7 +5,6 @@
 
 #pragma once
 #define NOMINMAX
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
 #include <windows.h>
 #include <gl/gl.h>
@@ -33,4 +32,5 @@
 #include "tex_man.h"
 
 #include "../helper/helper.h"
+#include "../helper/helper_text.h"
 #include "../WGLGrabberGen.h"

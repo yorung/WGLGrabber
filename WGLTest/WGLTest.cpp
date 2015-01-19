@@ -185,7 +185,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			break;
 		}
 		Input();
-		app.Update();
+
+		RECT rc;
+		GetClientRect(hWnd, &rc);
+		int w = rc.right - rc.left;
+		int h = rc.bottom - rc.top;
+
+		app.Update((float)w / h,  0);
 		app.Draw();
 		Sleep(1);
 	}
