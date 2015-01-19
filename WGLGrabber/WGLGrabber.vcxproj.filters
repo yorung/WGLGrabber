@@ -29,13 +29,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WGLGrabber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="helper_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WGLGrabberGen.cpp">
+    <ClCompile Include="WGLGrabber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

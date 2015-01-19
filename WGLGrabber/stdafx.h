@@ -9,11 +9,7 @@
 #include <tchar.h>
 #include <regex>
 #include <windows.h>
-#include <gl/gl.h>
 #include <assert.h>
 #include <cstdint>
-
-#include "glheaders/wglext.h"
-#include "WGLGrabberGen.h"
 
 #include "helper.h"
