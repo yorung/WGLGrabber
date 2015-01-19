@@ -116,8 +116,14 @@ WaterSurface::~WaterSurface()
 
 void WaterSurface::Destroy()
 {
-	glDeleteBuffers(1, &vbo);
-	glDeleteBuffers(1, &ibo);
+	if (vbo) {
+		glDeleteBuffers(1, &vbo);
+		vbo = 0;
+	}
+	if (ibo) {
+		glDeleteBuffers(1, &ibo);
+		ibo = 0;
+	}
 }
 
 void WaterSurface::Init()
@@ -157,8 +163,8 @@ void WaterSurface::Init()
 	glBufferData(GL_ARRAY_BUFFER, indi.size() * sizeof(short), &indi[0], GL_STATIC_DRAW);
 
 	static const InputElement elements[] = {
-		{ "vPosition", 3, 0 },
-		{ "vNormal", 3, 12 },
+		{ 0, "vPosition", SF_R32G32B32_FLOAT, 0 },
+		{ 0, "vNormal", SF_R32G32B32_FLOAT, 12 },
 	};
 //	texId = texMan.Create("sphere.jpg");
 	shaderId = shaderMan.Create("water", elements, dimof(elements));
