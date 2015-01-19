@@ -79,8 +79,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\helper\helper.h" />
+    <ClInclude Include="app.h" />
+    <ClInclude Include="matrix_man.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="shader_man.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="tex_man.h" />
+    <ClInclude Include="water_surface.h" />
     <ClInclude Include="WGLTest.h" />
   </ItemGroup>
   <ItemGroup>
@@ -97,10 +102,15 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="app.cpp" />
+    <ClCompile Include="matrix_man.cpp" />
+    <ClCompile Include="shader_man.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="tex_man.cpp" />
+    <ClCompile Include="water_surface.cpp" />
     <ClCompile Include="WGLTest.cpp" />
   </ItemGroup>
   <ItemGroup>

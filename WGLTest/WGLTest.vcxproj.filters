@@ -27,6 +27,21 @@
     <ClInclude Include="..\helper\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="matrix_man.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shader_man.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tex_man.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="water_surface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +54,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\helper\helper_win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix_man.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shader_man.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tex_man.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="water_surface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

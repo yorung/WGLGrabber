@@ -4,7 +4,7 @@
 //
 
 #pragma once
-
+#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
 #include <windows.h>
@@ -20,5 +20,17 @@
 #include <tchar.h>
 #include <cstdint>
 #include <assert.h>
+#include <map>
+#include <vector>
+#include <algorithm>
 
 // TODO: reference additional headers your program requires here
+#include "af_math.h"
+#include "matrix_man.h"
+#include "shader_man.h"
+#include "water_surface.h"
+#include "app.h"
+#include "tex_man.h"
+
+#include "../helper/helper.h"
+#include "../WGLGrabberGen.h"

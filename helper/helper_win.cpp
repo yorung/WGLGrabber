@@ -81,3 +81,16 @@ void GoMyDir()
 	*p = '\0';
 	SetCurrentDirectoryA(dir);
 }
+
+double GetTime()
+{
+	LARGE_INTEGER t, f;
+	QueryPerformanceCounter(&t);
+	QueryPerformanceFrequency(&f);
+	return (double)t.QuadPart / f.QuadPart;
+}
+
+float Random()
+{
+	return (float)rand() / RAND_MAX;
+}

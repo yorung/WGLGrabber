@@ -92,25 +92,6 @@ void DestroyWGL(HWND hWnd)
 	}
 }
 
-
-class App {
-public:
-	void Update();
-	void Draw();
-};
-
-App app;
-void App::Update()
-{
-
-}
-void App::Draw()
-{
-	glClearColor(1, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	SwapBuffers(wglGetCurrentDC());
-}
-
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -140,6 +121,27 @@ static BOOL ProcessWindowMessage(){
 		}
 
 		return TRUE;
+	}
+}
+
+static void Input()
+{
+	static bool last;
+	bool current = !!(GetKeyState(VK_LBUTTON) & 0x80);
+	bool edge = current && !last;
+	last = current;
+
+	if (edge) {
+		POINT pt;
+		GetCursorPos(&pt);
+		ScreenToClient(GetForegroundWindow(), &pt);
+
+		RECT rc;
+		GetClientRect(hWnd, &rc);
+		int w = rc.right - rc.left;
+		int h = rc.bottom - rc.top;
+
+		app.CreateRipple((float)pt.x / w * 2 - 1, (float)pt.y / h * -2 + 1);
 	}
 }
 
@@ -173,13 +175,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WGLTEST));
 
+	GoMyDir();
 	CreateWGL(hWnd);
+	app.Create();
 
 	// Main message loop:
 	for (;;) {
 		if (!ProcessWindowMessage()) {
 			break;
 		}
+		Input();
 		app.Update();
 		app.Draw();
 		Sleep(1);
@@ -283,6 +288,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_CLOSE:
+		app.Create();
 		DestroyWGL(hWnd);
 		DestroyWindow(hWnd);
 		return 0;

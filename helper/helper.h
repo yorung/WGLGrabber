@@ -3,3 +3,5 @@
 void *LoadFile(const char *fileName, int* size = nullptr);
 bool SaveFile(const char *fileName, const uint8_t* buf, int size);
 void GoMyDir();
+double GetTime();
+float Random();
