@@ -45,15 +45,15 @@
     <ClInclude Include="..\helper\helper_text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\WGLGrabberGen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WGLTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\WGLGrabber\WGLGrabberGen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\helper\helper_win.cpp">
@@ -72,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="app.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\WGLGrabberGen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -43,8 +43,8 @@ void ParseHeader()
 		}
 		GLFunc func;
 		func.name = m[2].str();
-		func.decl = m[1].str() + " (*" + m[2].str() + ")" + m[3].str();
-		func.caster = m[1].str() + " (*)" + m[3].str();
+		func.decl = m[1].str() + " (APIENTRY*" + m[2].str() + ")" + m[3].str();
+		func.caster = m[1].str() + " (APIENTRY*)" + m[3].str();
 		glFuncs.push_back(func);
 		printf("\r%d/%d", i++, dist);
 	}
