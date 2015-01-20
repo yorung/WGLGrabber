@@ -59,11 +59,11 @@ void WaterSurface::UpdateVert(std::vector<WaterVert>& vert)
 		t = true;
 		for (int i = 0; i < dimof(randWave); i++) {
 			RandWave& r = randWave[i];
-			r.degreePerSec = Random() * 15 - 7.5;
+			r.degreePerSec = Random() * 15 - 7.5f;
 			r.xShift = Random();
-			r.xMul = 2 + pow(2, 1 + 3 * Random());
-			r.timeMul = 2 + pow(2, 0.5 + 2 * Random());
-			r.strength = 0.005f * pow(2, 0.1 + 0.3 * Random());
+			r.xMul = 2 + powf(2, 1 + 3 * Random());
+			r.timeMul = 2 + powf(2, 0.5f + 2 * Random());
+			r.strength = 0.005f * powf(2, 0.1f + 0.3f * Random());
 		}
 	}
 	float hmap[vertMax][vertMax];
@@ -239,7 +239,7 @@ void WaterSurface::Draw()
 
 //	Mat m = scale(1.5f);
 //	Mat m = q2m(Quat(Vec3(1,0,0), M_PI / 180 * time * 60));
-	Mat matW = q2m(Quat(Vec3(1,0,0), 3.1415926 / 180 * -90));
+	Mat matW = q2m(Quat(Vec3(1,0,0), 3.1415926f / 180 * -90));
 	Mat matP, matV;
 	matrixMan.Get(MatrixMan::PROJ, matP);
 	matrixMan.Get(MatrixMan::VIEW, matV);
