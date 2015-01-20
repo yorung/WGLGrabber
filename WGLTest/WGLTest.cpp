@@ -47,10 +47,14 @@ void CreateWGL(HWND hWnd)
 	void* gldei = wglGetProcAddress("glDrawElementsIndirect");
 	void* glen1 = glEnable;
 	void* glen2 = wglGetProcAddress("glEnable");
-	GLuint(*glCreateProgram)(void);
-	glCreateProgram = (GLuint(*)(void))wglGetProcAddress("glCreateProgram");
-	GLuint(*glCreateShader)(GLenum type);
-	glCreateShader = (GLuint(*)(GLenum type))wglGetProcAddress("glCreateShader");
+	GLuint(APIENTRY*glCreateProgram)(void);
+	glCreateProgram = (GLuint(APIENTRY*)(void))wglGetProcAddress("glCreateProgram");
+	GLuint(APIENTRY*glCreateShader)(GLenum type);
+	glCreateShader = (GLuint(APIENTRY*)(GLenum type))wglGetProcAddress("glCreateShader");
+	GLuint test = glCreateShader(GL_VERTEX_SHADER);
+	void(APIENTRY*glDeleteShader)(GLuint name);
+	glDeleteShader = (void(APIENTRY*)(GLuint name))wglGetProcAddress("glDeleteShader");
+	glDeleteShader(test);
 
 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 	static const int attribList[] = {
@@ -176,6 +180,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WGLTEST));
 
 	GoMyDir();
+	SetCurrentDirectoryA("assets");
 	CreateWGL(hWnd);
 	app.Create();
 
@@ -190,8 +195,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		GetClientRect(hWnd, &rc);
 		int w = rc.right - rc.left;
 		int h = rc.bottom - rc.top;
+		glViewport(rc.left, rc.top, rc.right, rc.bottom);
 
-		app.Update((float)w / h,  0);
+		app.Update((float)h / w,  0);
 		app.Draw();
 		Sleep(1);
 	}

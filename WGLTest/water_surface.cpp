@@ -173,6 +173,20 @@ void WaterSurface::Init()
 	for (int i = 0; i < dimof(texFiles); i++) {
 		texId[i] = texMan.Create(texFiles[i].name);
 	}
+
+	for (int i = 0; i < dimof(texFiles); i++) {
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, texId[i]);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		if (texFiles[i].clamp) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		} else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		}
+	}
 }
 
 void WaterSurface::Update()
@@ -210,6 +224,10 @@ void WaterSurface::Draw()
 
 	shaderMan.Apply(shaderId);
 
+	GLuint vertexBufferIds[] = { vbo };
+	GLsizei strides[] = { sizeof(WaterVert) };
+	shaderMan.SetVertexBuffers(shaderId, 1, vertexBufferIds, strides);
+
 	glUniform1i(glGetUniformLocation(shaderId, "sampler0"), 0);
 	glUniform1i(glGetUniformLocation(shaderId, "sampler1"), 1);
 	glUniform1i(glGetUniformLocation(shaderId, "sampler2"), 2);
@@ -228,15 +246,4 @@ void WaterSurface::Draw()
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matW"), 1, GL_FALSE, &matW.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matV"), 1, GL_FALSE, &matV.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matP"), 1, GL_FALSE, &matP.m[0][0]);
-
-	for (int i = 0; i < dimof(texFiles); i++) {
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, texId[i]);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		if (texFiles[i].clamp) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		}
-	}
 }
