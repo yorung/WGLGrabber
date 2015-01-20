@@ -8,8 +8,6 @@
 // Windows Header Files:
 #include <windows.h>
 #include <gl/gl.h>
-#include "../glheaders/wglext.h"
-
 
 // C RunTime Header Files
 #include <stdio.h>

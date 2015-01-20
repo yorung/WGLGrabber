@@ -43,6 +43,7 @@ void CreateWGL(HWND hWnd)
 		err("wglMakeCurrent failed.");
 		goto END;
 	}
+#if 0 // for test
 	void* glpu = wglGetProcAddress("glProgramUniform1f");
 	void* gldei = wglGetProcAddress("glDrawElementsIndirect");
 	void* glen1 = glEnable;
@@ -55,8 +56,9 @@ void CreateWGL(HWND hWnd)
 	void(APIENTRY*glDeleteShader)(GLuint name);
 	glDeleteShader = (void(APIENTRY*)(GLuint name))wglGetProcAddress("glDeleteShader");
 	glDeleteShader(test);
+#endif
+	WGLGrabberInit();
 
-	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 	static const int attribList[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
 		WGL_CONTEXT_MINOR_VERSION_ARB, 0,
@@ -76,8 +78,7 @@ void CreateWGL(HWND hWnd)
 		goto END;
 	}
 
-	void WGLGrabberInit();
-	WGLGrabberInit();
+
 END:
 //	ReleaseDC(hWnd, hdc);	// do not release dc; WGL using it
 	return;	// do nothing
