@@ -136,7 +136,7 @@ static GLuint LoadDDSTexture(const char* name)
 	int blockSize = 16;
 	switch (hdr->fourcc) {
 	case 0x31545844: //'1TXD':
-		format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+		format = 0x83F1;	// GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 		blockSize = 8;
 		break;
 		//	case 0x33545844; //'3TXD':

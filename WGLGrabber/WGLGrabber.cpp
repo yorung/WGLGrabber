@@ -53,8 +53,9 @@ void CodeGen()
 {
 	std::string hdr, cpp;
 	hdr += "#include <windows.h>\r\n";
-	hdr += "#include <gl/gl.h>\r\n";
-	hdr += "#include \"glheaders/glext.h\"\r\n";
+//	hdr += "#include <gl/gl.h>\r\n";
+//	hdr += "#include \"glheaders/glext.h\"\r\n";
+	hdr += "#include \"glheaders/glcorearb.h\"\r\n";
 	hdr += "#include \"glheaders/wglext.h\"\r\n";
 	for (auto it : glFuncs) {
 		hdr += std::string("extern ") + it.decl + ";\r\n";
@@ -78,7 +79,8 @@ void CodeGen()
 int _tmain(int argc, _TCHAR* argv[])
 {
 	GoMyDir();
-	ParseHeader("glheaders/glext.h", "^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
+//	ParseHeader("glheaders/glext.h", "^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
+	ParseHeader("glheaders/glcorearb.h", "^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
 	ParseHeader("glheaders/wglext.h", "^(\\w+(?:\\s+\\w+)*)\\s+WINAPI\\s+(wgl\\w+)\\s*(\\(.*\\))", "WINAPI");
 	CodeGen();
 	return 0;
