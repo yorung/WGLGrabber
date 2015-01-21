@@ -124,6 +124,14 @@ void WaterSurface::Destroy()
 		glDeleteBuffers(1, &ibo);
 		ibo = 0;
 	}
+	if (samplerRepeat) {
+		glDeleteSamplers(1, &samplerRepeat);
+		samplerRepeat = 0;
+	}
+	if (samplerClamp) {
+		glDeleteSamplers(1, &samplerClamp);
+		samplerClamp = 0;
+	}
 }
 
 void WaterSurface::Init()
@@ -174,18 +182,22 @@ void WaterSurface::Init()
 		texId[i] = texMan.Create(texFiles[i].name);
 	}
 
+	glGenSamplers(1, &samplerRepeat);
+	glSamplerParameteri(samplerRepeat, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glSamplerParameteri(samplerRepeat, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glSamplerParameteri(samplerRepeat, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glSamplerParameteri(samplerRepeat, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	glGenSamplers(1, &samplerClamp);
+	glSamplerParameteri(samplerClamp, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(samplerClamp, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(samplerClamp, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glSamplerParameteri(samplerClamp, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 	for (int i = 0; i < dimof(texFiles); i++) {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, texId[i]);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		if (texFiles[i].clamp) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		} else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		}
+		glBindSampler(i, texFiles[i].clamp ? samplerClamp : samplerRepeat);
 	}
 }
 

@@ -16,7 +16,6 @@ struct WaterRipple
 
 class WaterSurface
 {
-//	TexMan::TMID texId;
 	ShaderMan::SMID shaderId;
 	int lines;
 	void UpdateVert(std::vector<WaterVert>& vert);
@@ -28,6 +27,8 @@ class WaterSurface
 	double nextTime;
 	GLuint vbo, ibo;
 	int nIndi;
+	GLuint samplerClamp;
+	GLuint samplerRepeat;
 public:
 	WaterSurface();
 	~WaterSurface();
