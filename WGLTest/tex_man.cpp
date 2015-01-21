@@ -32,16 +32,25 @@ static GLuint LoadTextureViaGdiplus(const char* name)
 	WCHAR wc[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, 0, name, -1, wc, dimof(wc));
 	Gdiplus::Bitmap* image = new Gdiplus::Bitmap(wc);
+
 	int w = (int)image->GetWidth();
 	int h = (int)image->GetHeight();
+	Gdiplus::Rect rc(0, 0, w, h);
+
+	Gdiplus::BitmapData* bitmapData = new Gdiplus::BitmapData;
+	image->LockBits(&rc, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, bitmapData);
+
 	std::vector<uint32_t> col;
+	col.resize(w * h);
 	for (int y = 0; y < h; y++) {
+		memcpy(&col[y * w], (char*)bitmapData->Scan0 + bitmapData->Stride * y, w * 4);
 		for (int x = 0; x < w; x++) {
-			Gdiplus::Color c;
-			image->GetPixel(x, y, &c);
-			col.push_back((c.GetA() << 24) + (c.GetB() << 16) + (c.GetG() << 8) + c.GetR());
+			uint32_t& c = col[y * w + x];
+			c = (c & 0xff00ff00) | ((c & 0xff) << 16) | ((c & 0xff0000) >> 16);
 		}
 	}
+	image->UnlockBits(bitmapData);
+	delete bitmapData;
 	delete image;
 	Gdiplus::GdiplusShutdown(gdiplusToken);
 
