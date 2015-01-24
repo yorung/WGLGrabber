@@ -4,8 +4,8 @@ A very simple binder for OpenGL API on Windows(WGL)
 # How to use
 Add following 2 files to your project,
 
-* WGLGrabberGen.h
-* WGLGrabberGen.cpp
+* wgl_grabber_gen.h
+* wgl_grabber_gen.cpp
 
 and just call WGLGrabberInit after activate your own WGL context by calling wglMakeCurrent.
 
