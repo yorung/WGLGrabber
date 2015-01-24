@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 
-const char* generatedHdrName = "WGLGrabberGen.h";
-const char* generatedCppName = "WGLGrabberGen.cpp";
+const char* generatedHdrName = "wgl_grabber_gen.h";
+const char* generatedCppName = "wgl_grabber_gen.cpp";
 
 struct GLFunc
 {

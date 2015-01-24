@@ -1,4 +1,4 @@
-#include "WGLGrabberGen.h"
+#include "wgl_grabber_gen.h"
 void (APIENTRY*glCullFace)(GLenum mode);
 void (APIENTRY*glFrontFace)(GLenum mode);
 void (APIENTRY*glHint)(GLenum target, GLenum mode);

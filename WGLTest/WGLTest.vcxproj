@@ -80,7 +80,7 @@
   <ItemGroup>
     <ClInclude Include="..\helper\helper.h" />
     <ClInclude Include="..\helper\helper_text.h" />
-    <ClInclude Include="..\WGLGrabberGen.h" />
+    <ClInclude Include="..\wgl_grabber_gen.h" />
     <ClInclude Include="app.h" />
     <ClInclude Include="matrix_man.h" />
     <ClInclude Include="Resource.h" />
@@ -91,16 +91,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\helper\helper_win.cpp" />
-    <ClCompile Include="..\WGLGrabberGen.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeaderOutputFile>
+    <ClCompile Include="..\wgl_grabber_gen.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="app.cpp" />
@@ -112,7 +112,7 @@
     </ClCompile>
     <ClCompile Include="tex_man.cpp" />
     <ClCompile Include="water_surface.cpp" />
-    <ClCompile Include="WGLTest.cpp" />
+    <ClCompile Include="wgl_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WGLTest.rc" />

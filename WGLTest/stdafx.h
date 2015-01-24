@@ -21,7 +21,7 @@
 #include <algorithm>
 
 // TODO: reference additional headers your program requires here
-#include "../WGLGrabberGen.h"
+#include "../wgl_grabber_gen.h"
 #include "../helper/helper.h"
 #include "../helper/helper_text.h"
 
