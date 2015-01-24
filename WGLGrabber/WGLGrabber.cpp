@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 
+const char* generatedHdrName = "WGLGrabberGen.h";
+const char* generatedCppName = "WGLGrabberGen.cpp";
+
 struct GLFunc
 {
 	GLFunc(){}
@@ -61,9 +64,9 @@ void CodeGen()
 		hdr += std::string("extern ") + it.decl + ";\r\n";
 	}
 	hdr += "void WGLGrabberInit();\r\n";
-	SaveFile("WGLGrabberGen.h", (uint8_t*)hdr.c_str(), hdr.size());
+	SaveFile(generatedHdrName, (uint8_t*)hdr.c_str(), hdr.size());
 
-	cpp = "#include \"WGLGrabberGen.h\"\r\n";
+	cpp = std::string("#include \"") + generatedHdrName + "\"\r\n";
 	for (auto it : glFuncs) {
 		cpp += it.decl + ";\r\n";
 	}
@@ -73,7 +76,7 @@ void CodeGen()
 		cpp += std::string("\t") + it.name + " = (" + it.caster + ")wglGetProcAddress(\"" + it.name + "\");\r\n";
 	}
 	cpp += "}\r\n";
-	SaveFile("WGLGrabberGen.cpp", (uint8_t*)cpp.c_str(), cpp.size());
+	SaveFile(generatedCppName, (uint8_t*)cpp.c_str(), cpp.size());
 }
 
 int _tmain(int argc, _TCHAR* argv[])
