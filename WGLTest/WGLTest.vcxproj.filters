@@ -21,9 +21,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WGLTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\helper\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>

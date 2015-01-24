@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "WGLTest.h"
+#include "resource.h"
 
 #pragma comment(lib, "opengl32.lib")
 
