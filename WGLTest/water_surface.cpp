@@ -108,6 +108,8 @@ WaterSurface::WaterSurface()
 {
 	ibo = 0;
 	vbo = 0;
+	vboFullScr = 0;
+	iboFullScr = 0;
 	samplerClamp = 0;
 	samplerRepeat = 0;
 	ripplesNext = 0;
@@ -129,6 +131,14 @@ void WaterSurface::Destroy()
 	if (ibo) {
 		glDeleteBuffers(1, &ibo);
 		ibo = 0;
+	}
+	if (vboFullScr) {
+		glDeleteBuffers(1, &vboFullScr);
+		vboFullScr = 0;
+	}
+	if (iboFullScr) {
+		glDeleteBuffers(1, &iboFullScr);
+		iboFullScr = 0;
 	}
 	if (samplerRepeat) {
 		glDeleteSamplers(1, &samplerRepeat);
@@ -184,12 +194,27 @@ void WaterSurface::Init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indi.size() * sizeof(short), &indi[0], GL_STATIC_DRAW);
 
+	short iboFullScrSrc[] = {0, 1, 2, 3};
+	Vec2 vboFullScrSrc[] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+	glGenBuffers(1, &vboFullScr);
+	glBindBuffer(GL_ARRAY_BUFFER, vboFullScr);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vboFullScrSrc), &vboFullScrSrc[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &iboFullScr);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboFullScr);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iboFullScrSrc), &iboFullScrSrc[0], GL_STATIC_DRAW);
+
 	static const InputElement elements[] = {
 		{ 0, "vPosition", SF_R32G32B32_FLOAT, 0 },
 		{ 0, "vNormal", SF_R32G32B32_FLOAT, 12 },
 	};
-//	texId = texMan.Create("sphere.jpg");
 	shaderId = shaderMan.Create("water", elements, dimof(elements));
+
+	static const InputElement elementsFullScr[] = {
+		{ 0, "vPosition", SF_R32G32_FLOAT, 0 },
+	};
+	shaderIdFullScr = shaderMan.Create("vivid", elementsFullScr, dimof(elementsFullScr));
 
 	glActiveTexture(GL_TEXTURE0);
 	for (int i = 0; i < dimof(texFiles); i++) {
@@ -208,13 +233,11 @@ void WaterSurface::Init()
 	glSamplerParameteri(samplerClamp, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glSamplerParameteri(samplerClamp, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	for (int i = 0; i < dimof(texFiles); i++) {
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, texId[i]);
-		glBindSampler(i, texFiles[i].clamp ? samplerClamp : samplerRepeat);
-	}
-
 	glGenTextures(1, &texRenderTarget);
+	glBindTexture(GL_TEXTURE_2D, texRenderTarget);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glGenFramebuffers(1, &framebufferObject);
 }
 
@@ -245,6 +268,12 @@ void WaterSurface::Draw()
 
 	shaderMan.Apply(shaderId);
 
+	for (int i = 0; i < dimof(texFiles); i++) {
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, texId[i]);
+		glBindSampler(i, texFiles[i].clamp ? samplerClamp : samplerRepeat);
+	}
+
 	GLuint vertexBufferIds[] = { vbo };
 	GLsizei strides[] = { sizeof(WaterVert) };
 	shaderMan.SetVertexBuffers(shaderId, 1, vertexBufferIds, strides);
@@ -266,5 +295,36 @@ void WaterSurface::Draw()
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matV"), 1, GL_FALSE, &matV.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matP"), 1, GL_FALSE, &matP.m[0][0]);
 
-	glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texRenderTarget, 0);
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status == GL_FRAMEBUFFER_COMPLETE) {
+		glClearColor(0, 0, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+//		glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		shaderMan.Apply(shaderIdFullScr);
+		glUniform1i(glGetUniformLocation(shaderIdFullScr, "sampler"), 0);
+
+		GLuint vertexBufferIdsFullScr[] = { vboFullScr };
+		GLsizei strides[] = { sizeof(Vec2) };
+		shaderMan.SetVertexBuffers(shaderIdFullScr, 1, vertexBufferIdsFullScr, strides);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vboFullScr);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboFullScr);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texRenderTarget);
+//		glBindTexture(GL_TEXTURE_2D, texId[1]);
+		glBindSampler(0, samplerClamp);
+
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+	}
 }
