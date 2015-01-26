@@ -115,6 +115,7 @@ WaterSurface::WaterSurface()
 	ripplesNext = 0;
 	texRenderTarget = 0;
 	framebufferObject = 0;
+	renderbufferObject = 0;
 }
 
 WaterSurface::~WaterSurface()
@@ -155,6 +156,10 @@ void WaterSurface::Destroy()
 	if (framebufferObject) {
 		glDeleteFramebuffers(1, &framebufferObject);
 		framebufferObject = 0;
+	}
+	if (renderbufferObject) {
+		glDeleteRenderbuffers(1, &renderbufferObject);
+		renderbufferObject = 0;
 	}
 }
 
@@ -236,7 +241,16 @@ void WaterSurface::Init()
 	glGenTextures(1, &texRenderTarget);
 	glBindTexture(GL_TEXTURE_2D, texRenderTarget);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenRenderbuffers(1, &renderbufferObject);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderbufferObject);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 512, 512);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glGenFramebuffers(1, &framebufferObject);
 }
@@ -297,12 +311,14 @@ void WaterSurface::Draw()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texRenderTarget, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferObject);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status == GL_FRAMEBUFFER_COMPLETE) {
 		glClearColor(0, 0, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
@@ -321,8 +337,8 @@ void WaterSurface::Draw()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboFullScr);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texRenderTarget);
-//		glBindTexture(GL_TEXTURE_2D, texId[1]);
+//		glBindTexture(GL_TEXTURE_2D, texRenderTarget);
+		glBindTexture(GL_TEXTURE_2D, texId[1]);
 		glBindSampler(0, samplerClamp);
 
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);

@@ -33,6 +33,7 @@ class WaterSurface
 	GLuint samplerRepeat;
 	GLuint texRenderTarget;
 	GLuint framebufferObject;
+	GLuint renderbufferObject;
 public:
 	WaterSurface();
 	~WaterSurface();
