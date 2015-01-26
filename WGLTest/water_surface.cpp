@@ -106,6 +106,10 @@ void WaterSurface::UpdateVert(std::vector<WaterVert>& vert)
 
 WaterSurface::WaterSurface()
 {
+	ibo = 0;
+	vbo = 0;
+	samplerClamp = 0;
+	samplerRepeat = 0;
 	ripplesNext = 0;
 }
 
