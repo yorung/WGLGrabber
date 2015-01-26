@@ -111,6 +111,8 @@ WaterSurface::WaterSurface()
 	samplerClamp = 0;
 	samplerRepeat = 0;
 	ripplesNext = 0;
+	texRenderTarget = 0;
+	framebufferObject = 0;
 }
 
 WaterSurface::~WaterSurface()
@@ -135,6 +137,14 @@ void WaterSurface::Destroy()
 	if (samplerClamp) {
 		glDeleteSamplers(1, &samplerClamp);
 		samplerClamp = 0;
+	}
+	if (texRenderTarget) {
+		glDeleteTextures(1, &texRenderTarget);
+		texRenderTarget = 0;
+	}
+	if (framebufferObject) {
+		glDeleteFramebuffers(1, &framebufferObject);
+		framebufferObject = 0;
 	}
 }
 
@@ -203,6 +213,9 @@ void WaterSurface::Init()
 		glBindTexture(GL_TEXTURE_2D, texId[i]);
 		glBindSampler(i, texFiles[i].clamp ? samplerClamp : samplerRepeat);
 	}
+
+	glGenTextures(1, &texRenderTarget);
+	glGenFramebuffers(1, &framebufferObject);
 }
 
 void WaterSurface::Update()

@@ -29,6 +29,8 @@ class WaterSurface
 	int nIndi;
 	GLuint samplerClamp;
 	GLuint samplerRepeat;
+	GLuint texRenderTarget;
+	GLuint framebufferObject;
 public:
 	WaterSurface();
 	~WaterSurface();
