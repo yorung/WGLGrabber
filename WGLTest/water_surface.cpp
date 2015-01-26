@@ -228,14 +228,6 @@ void WaterSurface::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-//	float rad = sinf(time * M_PI) * 0.5f * M_PI;
-//	vertOld[0].normal = Vec3(0, 0, 1) * cosf(rad) + Vec3(1, 0, 0) * sinf(rad);
-//	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertOld), vertOld);
-
-//	glDrawArrays(GL_TRIANGLE_STRIP, 0, dimof(vert));
-	glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
-//	glDisableVertexAttribArray(mPositionHandle);
-
 	Update();
 
 	shaderMan.Apply(shaderId);
@@ -253,8 +245,6 @@ void WaterSurface::Draw()
 	double dummy;
 	glUniform1f(glGetUniformLocation(shaderId, "time"), (float)modf(elapsedTime * (1.0f / loopTime), &dummy) * loopTime);
 
-//	Mat m = scale(1.5f);
-//	Mat m = q2m(Quat(Vec3(1,0,0), M_PI / 180 * time * 60));
 	Mat matW = q2m(Quat(Vec3(1,0,0), 3.1415926f / 180 * -90));
 	Mat matP, matV;
 	matrixMan.Get(MatrixMan::PROJ, matP);
@@ -262,4 +252,6 @@ void WaterSurface::Draw()
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matW"), 1, GL_FALSE, &matW.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matV"), 1, GL_FALSE, &matV.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matP"), 1, GL_FALSE, &matP.m[0][0]);
+
+	glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
 }
