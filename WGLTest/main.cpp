@@ -294,7 +294,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
 		case IDM_EXIT:
-			DestroyWindow(hWnd);
+			SendMessage(hWnd, WM_CLOSE, 0, 0);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -306,7 +306,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_CLOSE:
-		app.Create();
+		app.Destroy();
 		DestroyWGL(hWnd);
 		DestroyWindow(hWnd);
 		return 0;
