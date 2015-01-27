@@ -55,7 +55,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -112,7 +112,7 @@
     </ClCompile>
     <ClCompile Include="tex_man.cpp" />
     <ClCompile Include="water_surface.cpp" />
-    <ClCompile Include="wgl_test.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WGLTest.rc" />
