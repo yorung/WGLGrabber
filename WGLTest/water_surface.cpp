@@ -163,6 +163,28 @@ void WaterSurface::Destroy()
 	}
 }
 
+static void HandleGLError(const char* func, int line, const char* command)
+{
+	GLenum r = glGetError();
+	if (r != GL_NO_ERROR) {
+		const char *err = nullptr;
+		switch (r) {
+#define E(er) case er: err = #er; break;
+		E(GL_INVALID_ENUM)
+		E(GL_INVALID_VALUE)
+		E(GL_INVALID_OPERATION)
+		E(GL_INVALID_FRAMEBUFFER_OPERATION)
+#undef E
+		default:
+			printf("%s(%d): err=%d %s\n", func, line, r, command);
+			return;
+		}
+		printf("%s(%d): %s %s\n", func, line, err, command);
+	}
+}
+
+#define V(command) do{ command; HandleGLError(__FUNCTION__, __LINE__, #command); } while(0)
+
 void WaterSurface::Init()
 {
 	Destroy();
@@ -309,20 +331,20 @@ void WaterSurface::Draw()
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matV"), 1, GL_FALSE, &matV.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matP"), 1, GL_FALSE, &matP.m[0][0]);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texRenderTarget, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderbufferObject);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferObject);
+	V(glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject));
+	V(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texRenderTarget, 0));
+	V(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferObject));
+	V(glBindRenderbuffer(GL_RENDERBUFFER, renderbufferObject));
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status == GL_FRAMEBUFFER_COMPLETE) {
 		glClearColor(0, 0, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+	//	glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
+		V(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0));
+		V(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0));
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+		V(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	//	V(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0));
 //		glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -338,10 +360,10 @@ void WaterSurface::Draw()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboFullScr);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texRenderTarget);
-//		glBindTexture(GL_TEXTURE_2D, texId[1]);
-		glBindSampler(0, samplerClamp);
+//		glBindTexture(GL_TEXTURE_2D, texRenderTarget);
+		glBindTexture(GL_TEXTURE_2D, texId[1]);
+		glBindSampler(0, samplerRepeat);
 
-		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+		V(glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0));
 	}
 }
