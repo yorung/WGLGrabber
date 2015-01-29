@@ -29,9 +29,8 @@ std::vector<GLFunc> glFuncs;
 void ParseHeader(const char* healderFileName, const char* regExp, const char* conventions)
 {
 	char* h = (char*)LoadFile(healderFileName);
-	std::regex pattern(regExp);
-	std::cmatch match;
 	std::string str = h;
+	std::regex pattern(regExp);
 	auto funcBegin = std::sregex_iterator(str.begin(), str.end(), pattern);
 	auto End = std::sregex_iterator();
 	int dist = std::distance(funcBegin, End);
