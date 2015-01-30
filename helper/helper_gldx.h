@@ -18,6 +18,14 @@ inline void afSafeDeleteBuffer(GLuint& b)
 		b = 0;
 	}
 }
+inline void afSafeDeleteSampler(GLuint& s)
+{
+	if (s != 0) {
+		glDeleteSamplers(1, &s);
+		s = 0;
+	}
+
+}
 #endif
 
 #ifdef __d3d11_h__

@@ -51,6 +51,9 @@
     <ClInclude Include="..\helper\helper_text.h">
       <Filter>helper</Filter>
     </ClInclude>
+    <ClInclude Include="..\helper\helper_gldx.h">
+      <Filter>helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

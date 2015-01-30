@@ -125,30 +125,12 @@ WaterSurface::~WaterSurface()
 
 void WaterSurface::Destroy()
 {
-	if (vbo) {
-		glDeleteBuffers(1, &vbo);
-		vbo = 0;
-	}
-	if (ibo) {
-		glDeleteBuffers(1, &ibo);
-		ibo = 0;
-	}
-	if (vboFullScr) {
-		glDeleteBuffers(1, &vboFullScr);
-		vboFullScr = 0;
-	}
-	if (iboFullScr) {
-		glDeleteBuffers(1, &iboFullScr);
-		iboFullScr = 0;
-	}
-	if (samplerRepeat) {
-		glDeleteSamplers(1, &samplerRepeat);
-		samplerRepeat = 0;
-	}
-	if (samplerClamp) {
-		glDeleteSamplers(1, &samplerClamp);
-		samplerClamp = 0;
-	}
+	afSafeDeleteBuffer(vbo);
+	afSafeDeleteBuffer(ibo);
+	afSafeDeleteBuffer(vboFullScr);
+	afSafeDeleteBuffer(iboFullScr);
+	afSafeDeleteSampler(samplerRepeat);
+	afSafeDeleteSampler(samplerClamp);
 	if (texRenderTarget) {
 		glDeleteTextures(1, &texRenderTarget);
 		texRenderTarget = 0;
