@@ -68,7 +68,7 @@ void CodeGen()
 	SaveFile(generatedHdrName, (uint8_t*)hdr.c_str(), hdr.size());
 
 	cpp = comment;
-	cpp = std::string("#include \"") + generatedHdrName + "\"\r\n";
+	cpp += std::string("#include \"") + generatedHdrName + "\"\r\n";
 	for (auto it : glFuncs) {
 		cpp += it.decl + ";\r\n";
 	}
