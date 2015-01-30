@@ -75,7 +75,7 @@ void WaterSurface::UpdateVert(std::vector<WaterVert>& vert)
 				const WaterRipple& r = ripples[i];
 				float lifeTime = (float)(elapsedTime - r.generatedTime);
 				float timeAfterArrived = lifeTime - length(r.centerPos - pos) / rippleSpeed;
-				float h = timeAfterArrived > 0 ? (float)sin(timeAfterArrived * 3.1415926 * 2 * repeat) * heightUnit : 0;
+				float h = timeAfterArrived > 0 ? (float)sin(timeAfterArrived * (M_PI * 2) * repeat) * heightUnit : 0;
 				h *= std::min(1.0f, powf(0.5f, lifeTime / halflife));
 
 				hmap[x][z] += h;
@@ -323,7 +323,7 @@ void WaterSurface::Draw()
 	double dummy;
 	glUniform1f(glGetUniformLocation(shaderId, "time"), (float)modf(elapsedTime * (1.0f / loopTime), &dummy) * loopTime);
 
-	Mat matW = q2m(Quat(Vec3(1,0,0), 3.1415926f / 180 * -90));
+	Mat matW = q2m(Quat(Vec3(1,0,0), (float)M_PI / 180 * -90));
 	Mat matP, matV;
 	matrixMan.Get(MatrixMan::PROJ, matP);
 	matrixMan.Get(MatrixMan::VIEW, matV);
