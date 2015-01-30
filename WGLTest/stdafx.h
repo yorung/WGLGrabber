@@ -24,6 +24,7 @@
 #include "../wgl_grabber_gen.h"
 #include "../helper/helper.h"
 #include "../helper/helper_text.h"
+#include "../helper/helper_gldx.h"
 
 #include "af_math.h"
 #include "matrix_man.h"

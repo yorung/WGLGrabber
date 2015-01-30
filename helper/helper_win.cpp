@@ -4,7 +4,6 @@ bool SaveFile(const char *fileName, const uint8_t* buf, int size)
 {
 	bool result = false;
 	FILE *f = nullptr;
-	void *ptr = NULL;
 
 	if (fopen_s(&f, fileName, "wb")) {
 		return false;
@@ -88,9 +87,4 @@ double GetTime()
 	QueryPerformanceCounter(&t);
 	QueryPerformanceFrequency(&f);
 	return (double)t.QuadPart / f.QuadPart;
-}
-
-float Random()
-{
-	return (float)rand() / RAND_MAX;
 }
