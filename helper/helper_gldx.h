@@ -10,6 +10,13 @@ typedef GLuint AFBufObj;
 typedef ID3D11Buffer* AFBufObj;
 #endif
 
+#ifdef USE_FAKE_SAMPLER
+#define glGenSamplers(a,b)
+#define glSamplerParameteri(a,b,c)
+#define glBindSampler(a,b)
+#define glDeleteSamplers(a,b)
+#endif
+
 #ifdef GL_TRUE
 inline void afSafeDeleteBuffer(GLuint& b)
 {
