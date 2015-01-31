@@ -201,9 +201,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE,
 		GetClientRect(hWnd, &rc);
 		int w = rc.right - rc.left;
 		int h = rc.bottom - rc.top;
-		glViewport(rc.left, rc.top, rc.right, rc.bottom);
 
-		app.Update((float)h / w,  0);
+		app.Update(w, h,  0);
 		app.Draw();
 		Sleep(1);
 	}
