@@ -152,19 +152,24 @@ static void Input()
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
+BOOL				InitInstance(HINSTANCE);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
-{
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: Place code here.
+#ifdef _DEBUG
+int main(int, char**)
+#else
+int APIENTRY _tWinMain(_In_ HINSTANCE,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int)
+#endif
+
+{
+	HINSTANCE hInstance = GetModuleHandle(nullptr);
+	
+	// TODO: Place code here.
 	HACCEL hAccelTable;
 
 	// Initialize global strings
@@ -173,7 +178,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow))
+	if (!InitInstance (hInstance))
 	{
 		return FALSE;
 	}
@@ -196,9 +201,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		GetClientRect(hWnd, &rc);
 		int w = rc.right - rc.left;
 		int h = rc.bottom - rc.top;
-		glViewport(rc.left, rc.top, rc.right, rc.bottom);
 
-		app.Update((float)h / w,  0);
+		app.Update(w, h,  0);
 		app.Draw();
 		Sleep(1);
 	}
@@ -243,7 +247,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //        In this function, we save the instance handle in a global variable and
 //        create and display the main program window.
 //
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+BOOL InitInstance(HINSTANCE hInstance)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
@@ -255,7 +259,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
-   ShowWindow(hWnd, nCmdShow);
+   ShowWindow(hWnd, SW_SHOWNORMAL);
    UpdateWindow(hWnd);
 
    return TRUE;
@@ -289,7 +293,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
 		case IDM_EXIT:
-			DestroyWindow(hWnd);
+			SendMessage(hWnd, WM_CLOSE, 0, 0);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -301,7 +305,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_CLOSE:
-		app.Create();
+		app.Destroy();
 		DestroyWGL(hWnd);
 		DestroyWindow(hWnd);
 		return 0;

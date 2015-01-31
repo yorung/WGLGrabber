@@ -35,8 +35,10 @@ void App::Destroy()
 	waterSurface.Destroy();
 }
 
-void App::Update(float aspect, float offset)
+void App::Update(int w, int h, float offset)
 {
+	float aspect = (float)h / w;
+	glViewport(0, 0, w, h);
 	if (aspect < 1) {
 		matrixMan.Set(MatrixMan::VIEW, fastInv(translate(0, 0.5f * (1 - aspect), 0)));
 		matrixMan.Set(MatrixMan::PROJ, Mat(
@@ -52,4 +54,5 @@ void App::Update(float aspect, float offset)
 			0, 0, 1, 0,
 			0, 0, 0, 1));
 	}
+	waterSurface.Update(w, h);
 }

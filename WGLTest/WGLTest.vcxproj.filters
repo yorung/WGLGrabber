@@ -13,15 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{1cdaf1b2-c3ef-4338-8bcb-3d6736c12a82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gen">
+      <UniqueIdentifier>{0dfd00aa-52be-4f12-bf89-666298cbd497}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\helper\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="matrix_man.h">
@@ -39,18 +42,21 @@
     <ClInclude Include="app.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\helper\helper_text.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\helper\helper.h">
+      <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="..\wgl_grabber_gen.h">
-      <Filter>Header Files</Filter>
+      <Filter>gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helper\helper_text.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helper\helper_gldx.h">
+      <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\helper\helper_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="matrix_man.cpp">
@@ -68,11 +74,20 @@
     <ClCompile Include="app.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wgl_test.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\helper\helper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helper\helper_win.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
     <ClCompile Include="..\wgl_grabber_gen.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>gen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helper\helper_gldx.cpp">
+      <Filter>helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

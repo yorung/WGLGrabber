@@ -55,7 +55,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\helper\helper.h" />
+    <ClInclude Include="..\helper\helper_gldx.h" />
     <ClInclude Include="..\helper\helper_text.h" />
     <ClInclude Include="..\wgl_grabber_gen.h" />
     <ClInclude Include="app.h" />
@@ -90,6 +91,8 @@
     <ClInclude Include="water_surface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\helper\helper.cpp" />
+    <ClCompile Include="..\helper\helper_gldx.cpp" />
     <ClCompile Include="..\helper\helper_win.cpp" />
     <ClCompile Include="..\wgl_grabber_gen.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -112,7 +115,7 @@
     </ClCompile>
     <ClCompile Include="tex_man.cpp" />
     <ClCompile Include="water_surface.cpp" />
-    <ClCompile Include="wgl_test.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WGLTest.rc" />

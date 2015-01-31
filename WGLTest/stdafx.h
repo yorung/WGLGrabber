@@ -9,6 +9,8 @@
 #include <windows.h>
 
 // C RunTime Header Files
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
@@ -24,6 +26,7 @@
 #include "../wgl_grabber_gen.h"
 #include "../helper/helper.h"
 #include "../helper/helper_text.h"
+#include "../helper/helper_gldx.h"
 
 #include "af_math.h"
 #include "matrix_man.h"
