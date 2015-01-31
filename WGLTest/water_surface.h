@@ -14,6 +14,21 @@ struct WaterRipple
 	Vec2 centerPos;
 };
 
+class VertexObjs
+{
+public:
+	VertexObjs()
+	{
+		vbo = ibo = 0;
+	}
+	void Destory()
+	{
+		afSafeDeleteBuffer(vbo);
+		afSafeDeleteBuffer(ibo);
+	}
+	GLuint vbo, ibo;
+};
+
 class WaterSurface
 {
 	ShaderMan::SMID shaderId;
@@ -26,8 +41,8 @@ class WaterSurface
 	double elapsedTime;
 	double lastTime;
 	double nextTime;
-	GLuint vbo, ibo;
-	GLuint vboFullScr, iboFullScr;
+	VertexObjs surfaceVtxObjs;
+	VertexObjs fullScrVtxObjs;
 	int nIndi;
 	GLuint samplerClamp;
 	GLuint samplerRepeat;
