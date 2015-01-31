@@ -369,7 +369,6 @@ void WaterSurface::Draw()
 		GLsizei strides[] = { sizeof(Vec2) };
 		shaderMan.SetVertexBuffers(shaderIdFullScr, 1, vertexBufferIdsFullScr, strides);
 
-		glBindBuffer(GL_ARRAY_BUFFER, fullScrVtxObjs.vbo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fullScrVtxObjs.ibo);
 
 		glActiveTexture(GL_TEXTURE0);
