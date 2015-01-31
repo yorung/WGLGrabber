@@ -19,14 +19,18 @@ class VertexObjs
 public:
 	VertexObjs()
 	{
-		vbo = ibo = 0;
+		vbo = ibo = vao = 0;
 	}
 	void Destory()
 	{
 		afSafeDeleteBuffer(vbo);
 		afSafeDeleteBuffer(ibo);
+		if (vao) {
+			glDeleteVertexArrays(1, &vao);
+			vao = 0;
+		}
 	}
-	GLuint vbo, ibo;
+	GLuint vbo, ibo, vao;
 };
 
 class WaterSurface

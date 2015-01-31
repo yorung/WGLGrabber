@@ -169,6 +169,17 @@ void WaterSurface::Init()
 
 	lastTime = GetTime();
 
+	static const InputElement elements[] = {
+		{ 0, "vPosition", SF_R32G32B32_FLOAT, 0 },
+		{ 0, "vNormal", SF_R32G32B32_FLOAT, 12 },
+	};
+	shaderId = shaderMan.Create("water", elements, dimof(elements));
+
+	static const InputElement elementsFullScr[] = {
+		{ 0, "vPosition", SF_R32G32_FLOAT, 0 },
+	};
+	shaderIdFullScr = shaderMan.Create("vivid", elementsFullScr, dimof(elementsFullScr));
+
 	std::vector<short> indi;
 	std::vector<WaterVert> vert;
 	UpdateVert(vert);
@@ -191,6 +202,9 @@ void WaterSurface::Init()
 	lines = indi.size() / 2;
 	nIndi = indi.size();
 
+	glGenVertexArrays(1, &surfaceVtxObjs.vao);
+	glBindVertexArray(surfaceVtxObjs.vao);
+
 	glGenBuffers(1, &surfaceVtxObjs.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, surfaceVtxObjs.vbo);
 	glBufferData(GL_ARRAY_BUFFER, vert.size() * sizeof(WaterVert), &vert[0], GL_DYNAMIC_DRAW);
@@ -199,8 +213,16 @@ void WaterSurface::Init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, surfaceVtxObjs.ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indi.size() * sizeof(short), &indi[0], GL_STATIC_DRAW);
 
+	GLuint vertexBufferIds[] = { surfaceVtxObjs.vbo };
+	GLsizei strides[] = { sizeof(WaterVert) };
+	shaderMan.SetVertexBuffers(shaderId, 1, vertexBufferIds, strides);
+
+
 	short iboFullScrSrc[] = {0, 1, 2, 3};
 	Vec2 vboFullScrSrc[] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+	glGenVertexArrays(1, &fullScrVtxObjs.vao);
+	glBindVertexArray(fullScrVtxObjs.vao);
 
 	glGenBuffers(1, &fullScrVtxObjs.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, fullScrVtxObjs.vbo);
@@ -210,16 +232,12 @@ void WaterSurface::Init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fullScrVtxObjs.ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iboFullScrSrc), &iboFullScrSrc[0], GL_STATIC_DRAW);
 
-	static const InputElement elements[] = {
-		{ 0, "vPosition", SF_R32G32B32_FLOAT, 0 },
-		{ 0, "vNormal", SF_R32G32B32_FLOAT, 12 },
-	};
-	shaderId = shaderMan.Create("water", elements, dimof(elements));
+	GLuint vertexBufferIdsFullScr[] = { fullScrVtxObjs.vbo };
+	GLsizei stridesFullScr[] = { sizeof(Vec2) };
+	shaderMan.SetVertexBuffers(shaderIdFullScr, 1, vertexBufferIdsFullScr, stridesFullScr);
 
-	static const InputElement elementsFullScr[] = {
-		{ 0, "vPosition", SF_R32G32_FLOAT, 0 },
-	};
-	shaderIdFullScr = shaderMan.Create("vivid", elementsFullScr, dimof(elementsFullScr));
+	glBindVertexArray(0);
+
 
 	glActiveTexture(GL_TEXTURE0);
 	for (int i = 0; i < dimof(texFiles); i++) {
@@ -270,7 +288,9 @@ void WaterSurface::Update()
 	std::vector<WaterVert> vert;
 	UpdateVert(vert);
 
+	glBindBuffer(GL_ARRAY_BUFFER, surfaceVtxObjs.vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vert.size() * sizeof(WaterVert), &vert[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	if (0) {
 //	if (elapsedTime >= nextTime) {
@@ -310,8 +330,6 @@ void WaterSurface::Update(int w, int h)
 
 void WaterSurface::Draw()
 {
-	glBindBuffer(GL_ARRAY_BUFFER, surfaceVtxObjs.vbo);
-
 	Update();
 
 	shaderMan.Apply(shaderId);
@@ -321,10 +339,6 @@ void WaterSurface::Draw()
 		glBindTexture(GL_TEXTURE_2D, texId[i]);
 		glBindSampler(i, texFiles[i].clamp ? samplerClamp : samplerRepeat);
 	}
-
-	GLuint vertexBufferIds[] = { surfaceVtxObjs.vbo };
-	GLsizei strides[] = { sizeof(WaterVert) };
-	shaderMan.SetVertexBuffers(shaderId, 1, vertexBufferIds, strides);
 
 	glUniform1i(glGetUniformLocation(shaderId, "sampler0"), 0);
 	glUniform1i(glGetUniformLocation(shaderId, "sampler1"), 1);
@@ -351,31 +365,23 @@ void WaterSurface::Draw()
 	if (status == GL_FRAMEBUFFER_COMPLETE) {
 		glClearColor(0, 0, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, surfaceVtxObjs.ibo);
+		glBindVertexArray(surfaceVtxObjs.vao);
 		glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
+		glBindVertexArray(0);
 		V(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0));
 		V(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0));
 
 		V(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	//	V(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0));
-//		glDrawElements(GL_TRIANGLE_STRIP, nIndi, GL_UNSIGNED_SHORT, 0);
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		shaderMan.Apply(shaderIdFullScr);
 		glUniform1i(glGetUniformLocation(shaderIdFullScr, "sampler"), 0);
-
-		GLuint vertexBufferIdsFullScr[] = { fullScrVtxObjs.vbo };
-		GLsizei strides[] = { sizeof(Vec2) };
-		shaderMan.SetVertexBuffers(shaderIdFullScr, 1, vertexBufferIdsFullScr, strides);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fullScrVtxObjs.ibo);
-
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texRenderTarget);
 //		glBindTexture(GL_TEXTURE_2D, texId[1]);
 		glBindSampler(0, samplerNoMipmap);
 
+		glBindVertexArray(fullScrVtxObjs.vao);
 		V(glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0));
+		glBindVertexArray(0);
 	}
 }
