@@ -73,11 +73,14 @@ void CreateWGL(HWND hWnd)
 	glDeleteShader(test);
 #endif
 	WGLGrabberInit();
-
+	int flags = 0;
+#ifdef _DEBUG
+	flags |= WGL_CONTEXT_DEBUG_BIT_ARB;
+#endif
 	static const int attribList[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
 		WGL_CONTEXT_MINOR_VERSION_ARB, 0,
-		WGL_CONTEXT_FLAGS_ARB, 0,
+		WGL_CONTEXT_FLAGS_ARB, flags,
 		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_ES2_PROFILE_BIT_EXT,
 		0,
 	};
@@ -95,6 +98,7 @@ void CreateWGL(HWND hWnd)
 #ifdef _DEBUG
 	DumpExtensions();
 	glDebugMessageCallbackARB(debugMessageHandler, nullptr);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 #endif
 END:
 //	ReleaseDC(hWnd, hdc);	// do not release dc; WGL using it
