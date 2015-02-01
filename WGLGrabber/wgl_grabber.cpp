@@ -43,8 +43,8 @@ void ParseHeader(const char* healderFileName, const char* regExp, const char* co
 		}
 		GLFunc func;
 		func.name = m[2].str();
-		func.decl = m[1].str() + " (" + conventions + "*" + m[2].str() + ")" + m[3].str();
-		func.caster = m[1].str() + " (" + conventions + "*)" + m[3].str();
+		func.decl = m[1].str() + "(" + conventions + "*" + m[2].str() + ")" + m[3].str();
+		func.caster = m[1].str() + "(" + conventions + "*)" + m[3].str();
 		glFuncs.push_back(func);
 		printf("\r%d/%d", ++i, dist);
 	}
@@ -85,8 +85,8 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	GoMyDir();
 //	ParseHeader("glheaders/glext.h", "^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
-	ParseHeader("glheaders/glcorearb.h", "^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
-	ParseHeader("glheaders/wglext.h", "^(\\w+(?:\\s+\\w+)*)\\s+WINAPI\\s+(wgl\\w+)\\s*(\\(.*\\))", "WINAPI");
+	ParseHeader("glheaders/glcorearb.h", "^GLAPI\\s+([\\w\\s\\*]+)APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
+	ParseHeader("glheaders/wglext.h", "^(\\w+(?:\\s+\\w+)*\\s+)WINAPI\\s+(wgl\\w+)\\s*(\\(.*\\))", "WINAPI");
 	CodeGen();
 	return 0;
 }
