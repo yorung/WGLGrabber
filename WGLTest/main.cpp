@@ -14,6 +14,14 @@ static void err(char *msg)
 }
 
 #ifdef _DEBUG
+static void DumpExtensions()
+{
+	const GLubyte* ext = glGetString(GL_EXTENSIONS);
+	do {
+		printf("%c", *ext == ' ' ? '\n' : *ext);
+	}while(*ext++);
+}
+
 static void APIENTRY debugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
 {
 	puts(message);
@@ -85,6 +93,7 @@ void CreateWGL(HWND hWnd)
 		goto END;
 	}
 #ifdef _DEBUG
+	DumpExtensions();
 	glDebugMessageCallbackARB(debugMessageHandler, nullptr);
 #endif
 END:
