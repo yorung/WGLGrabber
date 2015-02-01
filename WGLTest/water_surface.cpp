@@ -178,20 +178,25 @@ void WaterSurface::Init()
 
 	lastTime = GetTime();
 
+	glGenBuffers(1, &ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(WaterUniform), nullptr, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 	static const InputElement elements[] = {
 		{ 0, "vPosition", SF_R32G32B32_FLOAT, 0 },
 		{ 0, "vNormal", SF_R32G32B32_FLOAT, 12 },
 	};
 	shaderId = shaderMan.Create("water", elements, dimof(elements));
 
-	glGenBuffers(1, &ubo);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(WaterUniform), nullptr, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	int blockIdx = glGetUniformBlockIndex(shaderId, "WaterUniform");
-	V(glUniformBlockBinding(shaderId, blockIdx, uniformBindPoint));
-
+	V(glUniformBlockBinding(shaderId, glGetUniformBlockIndex(shaderId, "WaterUniform"), uniformBindPoint));
+	shaderMan.Apply(shaderId);
+	V(glUniform1i(glGetUniformLocation(shaderId, "sampler0"), 0));
+	glUniform1i(glGetUniformLocation(shaderId, "sampler1"), 1);
+	glUniform1i(glGetUniformLocation(shaderId, "sampler2"), 2);
+	glUniform1i(glGetUniformLocation(shaderId, "sampler3"), 3);
+	glUniform1i(glGetUniformLocation(shaderId, "sampler4"), 4);
+	glUniform1i(glGetUniformLocation(shaderId, "sampler5"), 5);
 
 	static const InputElement elementsFullScr[] = {
 		{ 0, "vPosition", SF_R32G32_FLOAT, 0 },
@@ -368,12 +373,6 @@ void WaterSurface::Draw()
 		glBindSampler(i, texFiles[i].clamp ? samplerClamp : samplerRepeat);
 	}
 
-	V(glUniform1i(glGetUniformLocation(shaderId, "sampler0"), 0));
-	glUniform1i(glGetUniformLocation(shaderId, "sampler1"), 1);
-	glUniform1i(glGetUniformLocation(shaderId, "sampler2"), 2);
-	glUniform1i(glGetUniformLocation(shaderId, "sampler3"), 3);
-	glUniform1i(glGetUniformLocation(shaderId, "sampler4"), 4);
-	glUniform1i(glGetUniformLocation(shaderId, "sampler5"), 5);
 #if 0
 	double dummy;
 	glUniform1f(glGetUniformLocation(shaderId, "time"), (float)modf(elapsedTime * (1.0f / loopTime), &dummy) * loopTime);
