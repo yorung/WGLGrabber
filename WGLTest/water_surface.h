@@ -39,7 +39,7 @@ class WaterSurface
 	ShaderMan::SMID shaderIdFullScr;
 	int lines;
 	void UpdateVert(std::vector<WaterVert>& vert);
-	void Update();
+	void UpdateBuffers();
 	WaterRipple ripples[2];
 	int ripplesNext;
 	double elapsedTime;
@@ -47,6 +47,7 @@ class WaterSurface
 	double nextTime;
 	VertexObjs surfaceVtxObjs;
 	VertexObjs fullScrVtxObjs;
+	GLuint ubo;
 	int nIndi;
 	GLuint samplerClamp;
 	GLuint samplerRepeat;

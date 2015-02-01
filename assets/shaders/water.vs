@@ -7,9 +7,11 @@ out vec2 texcoord;
 out vec2 position;
 out vec3 normal;
 out vec4 color;
-uniform mat4 matW;
-uniform mat4 matV;
-uniform mat4 matP;
+layout (std140) uniform Matrices {
+	uniform mat4 matW;
+	uniform mat4 matV;
+	uniform mat4 matP;
+};
 
 const float airToWater = 1.0 / 1.33333;
 const vec3 camDir = vec3(0, 0, -1);

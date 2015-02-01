@@ -19,6 +19,10 @@ TexFiles texFiles[] = {
 
 TexMan::TMID texId[dimof(texFiles)];
 
+struct WaterUniform
+{
+	Mat w, v, p;
+};
 
 const int tileMax = 50;
 const int vertMax = tileMax + 1;
@@ -29,6 +33,8 @@ const float halflife = 1.5f;
 const float heightUnit = 0.02f;
 const float rippleSpeed = 0.7f;
 const float loopTime = 20.0;
+
+const int uniformBindPoint = 5;
 
 static Vec3 MakePos(int x, int z, float hmap[vertMax][vertMax])
 {
@@ -113,6 +119,7 @@ WaterSurface::WaterSurface()
 	texRenderTarget = 0;
 	framebufferObject = 0;
 	renderbufferObject = 0;
+	ubo = 0;
 }
 
 WaterSurface::~WaterSurface()
@@ -139,6 +146,7 @@ void WaterSurface::Destroy()
 		glDeleteRenderbuffers(1, &renderbufferObject);
 		renderbufferObject = 0;
 	}
+	afSafeDeleteBuffer(ubo);
 }
 
 static void HandleGLError(const char* func, int line, const char* command)
@@ -174,6 +182,15 @@ void WaterSurface::Init()
 		{ 0, "vNormal", SF_R32G32B32_FLOAT, 12 },
 	};
 	shaderId = shaderMan.Create("water", elements, dimof(elements));
+
+	glGenBuffers(1, &ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(WaterUniform), nullptr, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	int blockIdx = glGetUniformBlockIndex(shaderId, "Matrices");
+	V(glUniformBlockBinding(shaderId, blockIdx, uniformBindPoint));
+
 
 	static const InputElement elementsFullScr[] = {
 		{ 0, "vPosition", SF_R32G32_FLOAT, 0 },
@@ -279,7 +296,7 @@ void WaterSurface::Init()
 	glGenFramebuffers(1, &framebufferObject);
 }
 
-void WaterSurface::Update()
+void WaterSurface::UpdateBuffers()
 {
 	double now = GetTime();
 	elapsedTime += now - lastTime;
@@ -297,6 +314,15 @@ void WaterSurface::Update()
 		nextTime = elapsedTime + 0.5 + Random() * 2;
 		CreateRipple(Vec2(Random(), Random()) * 4 - Vec2(2, 2));
 	}
+
+	WaterUniform unif;
+	unif.w = q2m(Quat(Vec3(1, 0, 0), (float)M_PI / 180 * -90));
+	matrixMan.Get(MatrixMan::PROJ, unif.p);
+	matrixMan.Get(MatrixMan::VIEW, unif.v);
+
+	V(glBindBuffer(GL_UNIFORM_BUFFER, ubo));
+	V(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(WaterUniform), &unif));
+	V(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
 void WaterSurface::Update(int w, int h)
@@ -326,12 +352,11 @@ void WaterSurface::Update(int w, int h)
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, w, h);
 	}
 #endif
+	UpdateBuffers();
 }
 
 void WaterSurface::Draw()
 {
-	Update();
-
 	shaderMan.Apply(shaderId);
 
 	for (int i = 0; i < dimof(texFiles); i++) {
@@ -340,7 +365,7 @@ void WaterSurface::Draw()
 		glBindSampler(i, texFiles[i].clamp ? samplerClamp : samplerRepeat);
 	}
 
-	glUniform1i(glGetUniformLocation(shaderId, "sampler0"), 0);
+	V(glUniform1i(glGetUniformLocation(shaderId, "sampler0"), 0));
 	glUniform1i(glGetUniformLocation(shaderId, "sampler1"), 1);
 	glUniform1i(glGetUniformLocation(shaderId, "sampler2"), 2);
 	glUniform1i(glGetUniformLocation(shaderId, "sampler3"), 3);
@@ -348,15 +373,16 @@ void WaterSurface::Draw()
 	glUniform1i(glGetUniformLocation(shaderId, "sampler5"), 5);
 	double dummy;
 	glUniform1f(glGetUniformLocation(shaderId, "time"), (float)modf(elapsedTime * (1.0f / loopTime), &dummy) * loopTime);
-
-	Mat matW = q2m(Quat(Vec3(1,0,0), (float)M_PI / 180 * -90));
+#if 0
+	Mat matW = q2m(Quat(Vec3(1, 0, 0), (float)M_PI / 180 * -90));
 	Mat matP, matV;
 	matrixMan.Get(MatrixMan::PROJ, matP);
 	matrixMan.Get(MatrixMan::VIEW, matV);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matW"), 1, GL_FALSE, &matW.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matV"), 1, GL_FALSE, &matV.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matP"), 1, GL_FALSE, &matP.m[0][0]);
-
+#endif
+	V(glBindBufferBase(GL_UNIFORM_BUFFER, uniformBindPoint, ubo));
 	V(glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject));
 	V(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texRenderTarget, 0));
 	V(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferObject));
