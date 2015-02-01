@@ -11,7 +11,12 @@ uniform sampler2D sampler2;
 uniform sampler2D sampler3;
 uniform sampler2D sampler4;
 uniform sampler2D sampler5;
-uniform float time;
+layout (std140) uniform WaterUniform {
+	uniform mat4 matW;
+	uniform mat4 matV;
+	uniform mat4 matP;
+	uniform float time;
+};
 
 const float loopTime = 20.0;
 const float PI2 = 3.1415926 * 2.0;

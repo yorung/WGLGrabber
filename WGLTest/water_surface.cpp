@@ -22,6 +22,7 @@ TexMan::TMID texId[dimof(texFiles)];
 struct WaterUniform
 {
 	Mat w, v, p;
+	float time;
 };
 
 const int tileMax = 50;
@@ -188,7 +189,7 @@ void WaterSurface::Init()
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(WaterUniform), nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	int blockIdx = glGetUniformBlockIndex(shaderId, "Matrices");
+	int blockIdx = glGetUniformBlockIndex(shaderId, "WaterUniform");
 	V(glUniformBlockBinding(shaderId, blockIdx, uniformBindPoint));
 
 
@@ -319,6 +320,8 @@ void WaterSurface::UpdateBuffers()
 	unif.w = q2m(Quat(Vec3(1, 0, 0), (float)M_PI / 180 * -90));
 	matrixMan.Get(MatrixMan::PROJ, unif.p);
 	matrixMan.Get(MatrixMan::VIEW, unif.v);
+	double dummy;
+	unif.time = (float)modf(elapsedTime * (1.0f / loopTime), &dummy) * loopTime;
 
 	V(glBindBuffer(GL_UNIFORM_BUFFER, ubo));
 	V(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(WaterUniform), &unif));
@@ -371,9 +374,9 @@ void WaterSurface::Draw()
 	glUniform1i(glGetUniformLocation(shaderId, "sampler3"), 3);
 	glUniform1i(glGetUniformLocation(shaderId, "sampler4"), 4);
 	glUniform1i(glGetUniformLocation(shaderId, "sampler5"), 5);
+#if 0
 	double dummy;
 	glUniform1f(glGetUniformLocation(shaderId, "time"), (float)modf(elapsedTime * (1.0f / loopTime), &dummy) * loopTime);
-#if 0
 	Mat matW = q2m(Quat(Vec3(1, 0, 0), (float)M_PI / 180 * -90));
 	Mat matP, matV;
 	matrixMan.Get(MatrixMan::PROJ, matP);

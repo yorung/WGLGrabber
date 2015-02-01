@@ -7,10 +7,11 @@ out vec2 texcoord;
 out vec2 position;
 out vec3 normal;
 out vec4 color;
-layout (std140) uniform Matrices {
+layout (std140) uniform WaterUniform {
 	uniform mat4 matW;
 	uniform mat4 matV;
 	uniform mat4 matP;
+	uniform float time;
 };
 
 const float airToWater = 1.0 / 1.33333;
