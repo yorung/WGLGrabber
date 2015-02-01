@@ -13,6 +13,13 @@ static void err(char *msg)
 	puts(msg);
 }
 
+#ifdef _DEBUG
+static void APIENTRY debugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
+{
+	puts(message);
+}
+#endif
+
 void CreateWGL(HWND hWnd)
 {
 	HDC hdc = GetDC(hWnd);
@@ -77,8 +84,9 @@ void CreateWGL(HWND hWnd)
 		err("wglMakeCurrent failed.");
 		goto END;
 	}
-
-
+#ifdef _DEBUG
+	glDebugMessageCallbackARB(debugMessageHandler, nullptr);
+#endif
 END:
 //	ReleaseDC(hWnd, hdc);	// do not release dc; WGL using it
 	return;	// do nothing
