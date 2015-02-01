@@ -19,6 +19,9 @@
     <Filter Include="gen">
       <UniqueIdentifier>{0dfd00aa-52be-4f12-bf89-666298cbd497}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{488c9732-8c71-43dd-9477-d4dd0891928f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -102,5 +105,19 @@
     <Image Include="WGLTest.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\assets\shaders\water.vs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\shaders\water.fs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\shaders\vivid.vs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\assets\shaders\vivid.fs">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

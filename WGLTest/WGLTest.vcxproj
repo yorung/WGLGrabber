@@ -124,6 +124,12 @@
     <Image Include="small.ico" />
     <Image Include="WGLTest.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\assets\shaders\vivid.fs" />
+    <None Include="..\assets\shaders\vivid.vs" />
+    <None Include="..\assets\shaders\water.fs" />
+    <None Include="..\assets\shaders\water.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
