@@ -14,8 +14,12 @@ static void err(char *msg)
 }
 
 #ifdef _DEBUG
-static void DumpExtensions()
+static void DumpInfo()
 {
+	puts((char*)glGetString(GL_VERSION));
+	puts((char*)glGetString(GL_RENDERER));
+	puts((char*)glGetString(GL_VENDOR));
+	puts((char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 	const GLubyte* ext = glGetString(GL_EXTENSIONS);
 	do {
 		printf("%c", *ext == ' ' ? '\n' : *ext);
@@ -96,7 +100,7 @@ void CreateWGL(HWND hWnd)
 		goto END;
 	}
 #ifdef _DEBUG
-	DumpExtensions();
+	DumpInfo();
 	glDebugMessageCallbackARB(debugMessageHandler, nullptr);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 #endif
