@@ -1,8 +1,8 @@
-#version 100
+#version 300 es
 
-attribute vec2 vPosition;
-varying vec2 texcoord;
-varying vec2 position;
+layout (location = 0) in vec2 vPosition;
+out vec2 texcoord;
+out vec2 position;
 
 void main() {
 	gl_Position = vec4(vPosition.xy, 0, 1);
