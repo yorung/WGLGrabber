@@ -25,16 +25,13 @@ struct GLFunc
 };
 std::vector<GLFunc> glFuncs;
 
-
-void ParseHeader(const char* healderFileName, const char* regExp, const char* conventions)
+void ParseHeader(std::string str, const char* regExp, const char* conventions)
 {
-	char* h = (char*)LoadFile(healderFileName);
-	std::string str = h;
 	std::regex pattern(regExp);
 	auto funcBegin = std::sregex_iterator(str.begin(), str.end(), pattern);
 	auto End = std::sregex_iterator();
 	int dist = std::distance(funcBegin, End);
-	printf("%d functions found in %s\n", dist, healderFileName);
+	printf("%d functions found\n", dist);
 	int i = 0;
 	for (auto it = funcBegin; it != End; it++) {
 		std::smatch m = *it;
@@ -49,7 +46,6 @@ void ParseHeader(const char* healderFileName, const char* regExp, const char* co
 		printf("\r%d/%d", ++i, dist);
 	}
 	printf("\n");
-	free(h);
 }
 
 void CodeGen()
@@ -57,7 +53,7 @@ void CodeGen()
 	std::string hdr, cpp;
 	hdr = comment;
 	hdr += "#include <windows.h>\r\n";
-//	hdr += "#include <gl/gl.h>\r\n";
+	hdr += "#include <gl/gl.h>\r\n";
 //	hdr += "#include \"glheaders/glext.h\"\r\n";
 	hdr += "#include \"glheaders/glcorearb.h\"\r\n";
 	hdr += "#include \"glheaders/wglext.h\"\r\n";
@@ -81,12 +77,30 @@ void CodeGen()
 	SaveFile(generatedCppName, (uint8_t*)cpp.c_str(), cpp.size());
 }
 
+std::string LoadStr(const char* fileName)
+{
+	std::ifstream img(fileName);
+	if (img.fail()) {
+		printf("failed loading %s\n", fileName);
+		return "";
+	}
+	printf("%s loaded\n", fileName);
+	return std::string(std::istreambuf_iterator<char>(img), std::istreambuf_iterator<char>());
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	GoMyDir();
-//	ParseHeader("glheaders/glext.h", "^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
-	ParseHeader("glheaders/glcorearb.h", "^GLAPI\\s+([\\w\\s\\*]+)APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
-	ParseHeader("glheaders/wglext.h", "^(\\w+(?:\\s+\\w+)*\\s+)WINAPI\\s+(wgl\\w+)\\s*(\\(.*\\))", "WINAPI");
+
+	std::string core = LoadStr("glheaders/glcorearb.h");
+	std::regex removeV10 = std::regex("#ifndef GL_VERSION_1_0[^]+#endif /\\* GL_VERSION_1_0 \\*/");
+	std::regex removeV11 = std::regex("#ifndef GL_VERSION_1_1[^]+#endif /\\* GL_VERSION_1_1 \\*/");
+	core = std::regex_replace(core, removeV10, "", std::regex_constants::match_default);
+	core = std::regex_replace(core, removeV11, "", std::regex_constants::match_default);
+
+//	ParseHeader(LoadStr("glheaders/glext.h"), "^GLAPI\\s+(\\w+)\\s+APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
+	ParseHeader(core, "^GLAPI\\s+([\\w\\s\\*]+)APIENTRY\\s+(gl\\w+)\\s*(\\(.*\\))", "APIENTRY");
+	ParseHeader(LoadStr("glheaders/wglext.h"), "^(\\w+(?:\\s+\\w+)*\\s+)WINAPI\\s+(wgl\\w+)\\s*(\\(.*\\))", "WINAPI");
 	CodeGen();
 	return 0;
 }
