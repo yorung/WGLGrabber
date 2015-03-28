@@ -1,8 +1,9 @@
 #version 300 es
 
+precision mediump float;
+
 layout (location = 0) out vec4 fragColor;
 
-precision mediump float;
 in vec2 position;
 in vec2 texcoord;
 uniform sampler2D sampler;
