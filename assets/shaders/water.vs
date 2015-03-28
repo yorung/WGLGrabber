@@ -1,6 +1,5 @@
-#version 310 es
+#version 430
 
-precision mediump float;
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 vNormal;
 out vec2 texcoord;
@@ -8,14 +7,6 @@ out vec2 position;
 out vec3 normal;
 out vec4 color;
 
-/*
-layout (std140) uniform WaterUniform {
-	uniform mat4 matW;
-	uniform mat4 matV;
-	uniform mat4 matP;
-	uniform float time;
-};
-*/
 layout (std430) buffer WaterSSBO {
 	mat4 matW;
 	mat4 matV;

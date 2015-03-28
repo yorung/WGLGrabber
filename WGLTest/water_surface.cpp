@@ -338,9 +338,9 @@ void WaterSurface::UpdateBuffers()
 	double dummy;
 	unif.time = (float)modf(elapsedTime * (1.0f / loopTime), &dummy) * loopTime;
 
-	V(glBindBuffer(GL_UNIFORM_BUFFER, ubo));
-	V(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(WaterUniform), &unif));
-	V(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+//	V(glBindBuffer(GL_UNIFORM_BUFFER, ubo));
+//	V(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(WaterUniform), &unif));
+//	V(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
 	V(glBindBuffer(GL_SHADER_STORAGE_BLOCK, ssbo));
 	V(glBufferSubData(GL_SHADER_STORAGE_BLOCK, 0, sizeof(WaterUniform), &unif));
