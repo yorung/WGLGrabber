@@ -48,6 +48,7 @@ class WaterSurface
 	VertexObjs surfaceVtxObjs;
 	VertexObjs fullScrVtxObjs;
 	GLuint ubo;
+	GLuint ssbo;
 	int nIndi;
 	GLuint samplerClamp;
 	GLuint samplerRepeat;

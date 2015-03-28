@@ -37,6 +37,8 @@ const float loopTime = 20.0;
 
 const int uniformBindPoint = 5;
 
+const int ssboBindPoint = 7;
+
 static Vec3 MakePos(int x, int z, float hmap[vertMax][vertMax])
 {
 	float height = hmap[std::max(0,std::min(tileMax, x))][std::max(0,std::min(tileMax, z))];
@@ -121,6 +123,7 @@ WaterSurface::WaterSurface()
 	framebufferObject = 0;
 	renderbufferObject = 0;
 	ubo = 0;
+	ssbo = 0;
 }
 
 WaterSurface::~WaterSurface()
@@ -148,6 +151,7 @@ void WaterSurface::Destroy()
 		renderbufferObject = 0;
 	}
 	afSafeDeleteBuffer(ubo);
+	afSafeDeleteBuffer(ssbo);
 }
 
 static void HandleGLError(const char* func, int line, const char* command)
@@ -183,13 +187,19 @@ void WaterSurface::Init()
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(WaterUniform), nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+	glGenBuffers(1, &ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(WaterUniform), nullptr, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
 	static const InputElement elements[] = {
 		{ 0, "vPosition", SF_R32G32B32_FLOAT, 0 },
 		{ 0, "vNormal", SF_R32G32B32_FLOAT, 12 },
 	};
 	shaderId = shaderMan.Create("water", elements, dimof(elements));
 
-	V(glUniformBlockBinding(shaderId, glGetUniformBlockIndex(shaderId, "WaterUniform"), uniformBindPoint));
+//	V(glUniformBlockBinding(shaderId, glGetUniformBlockIndex(shaderId, "WaterUniform"), uniformBindPoint));
+	V(glShaderStorageBlockBinding(shaderId, glGetProgramResourceIndex(shaderId, GL_SHADER_STORAGE_BLOCK, "WaterSSBO"), ssboBindPoint));
 	shaderMan.Apply(shaderId);
 	V(glUniform1i(glGetUniformLocation(shaderId, "sampler0"), 0));
 	glUniform1i(glGetUniformLocation(shaderId, "sampler1"), 1);
@@ -331,6 +341,10 @@ void WaterSurface::UpdateBuffers()
 	V(glBindBuffer(GL_UNIFORM_BUFFER, ubo));
 	V(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(WaterUniform), &unif));
 	V(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+
+	V(glBindBuffer(GL_SHADER_STORAGE_BLOCK, ssbo));
+	V(glBufferSubData(GL_SHADER_STORAGE_BLOCK, 0, sizeof(WaterUniform), &unif));
+	V(glBindBuffer(GL_SHADER_STORAGE_BLOCK, 0));
 }
 
 void WaterSurface::Update(int w, int h)
@@ -384,7 +398,8 @@ void WaterSurface::Draw()
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matV"), 1, GL_FALSE, &matV.m[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderId, "matP"), 1, GL_FALSE, &matP.m[0][0]);
 #endif
-	V(glBindBufferBase(GL_UNIFORM_BUFFER, uniformBindPoint, ubo));
+//	V(glBindBufferBase(GL_UNIFORM_BUFFER, uniformBindPoint, ubo));
+	V(glBindBufferBase(GL_SHADER_STORAGE_BLOCK, ssboBindPoint, ssbo));
 	V(glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject));
 	V(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texRenderTarget, 0));
 	V(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferObject));

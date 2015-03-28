@@ -1,4 +1,4 @@
-#version 300 es
+#version 310 es
 
 precision mediump float;
 in vec2 position;
@@ -11,11 +11,19 @@ uniform sampler2D sampler2;
 uniform sampler2D sampler3;
 uniform sampler2D sampler4;
 uniform sampler2D sampler5;
+/*
 layout (std140) uniform WaterUniform {
 	uniform mat4 matW;
 	uniform mat4 matV;
 	uniform mat4 matP;
 	uniform float time;
+};
+*/
+layout (std430) buffer WaterSSBO {
+	mat4 matW;
+	mat4 matV;
+	mat4 matP;
+	float time;
 };
 
 const float loopTime = 20.0;
