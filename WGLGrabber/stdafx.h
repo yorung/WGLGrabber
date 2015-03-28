@@ -11,5 +11,6 @@
 #include <windows.h>
 #include <assert.h>
 #include <cstdint>
+#include <fstream>
 
 #include "../helper/helper.h"
