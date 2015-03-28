@@ -29,7 +29,15 @@ std::vector<GLFunc> glFuncs;
 void ParseHeader(const char* healderFileName, const char* regExp, const char* conventions)
 {
 	char* h = (char*)LoadFile(healderFileName);
-	std::string str = h;
+
+//	test
+//	std::string res = std::regex_replace("bbb\n#ifndef GL_VERSION_1_0\n123\nendif\naaaaaa", std::regex("#ifndef GL_VERSION_1_0[^]+?endif"), "", std::regex_constants::match_default);
+
+	std::regex removeV10 = std::regex("#ifndef GL_VERSION_1_0[^]+#endif /\\* GL_VERSION_1_0 \\*/");
+	std::regex removeV11 = std::regex("#ifndef GL_VERSION_1_1[^]+#endif /\\* GL_VERSION_1_1 \\*/");
+	std::string str = std::regex_replace(h, removeV10, "", std::regex_constants::match_default);
+	str = std::regex_replace(str, removeV11, "", std::regex_constants::match_default);
+
 	std::regex pattern(regExp);
 	auto funcBegin = std::sregex_iterator(str.begin(), str.end(), pattern);
 	auto End = std::sregex_iterator();
@@ -57,7 +65,7 @@ void CodeGen()
 	std::string hdr, cpp;
 	hdr = comment;
 	hdr += "#include <windows.h>\r\n";
-//	hdr += "#include <gl/gl.h>\r\n";
+	hdr += "#include <gl/gl.h>\r\n";
 //	hdr += "#include \"glheaders/glext.h\"\r\n";
 	hdr += "#include \"glheaders/glcorearb.h\"\r\n";
 	hdr += "#include \"glheaders/wglext.h\"\r\n";
