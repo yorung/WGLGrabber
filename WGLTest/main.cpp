@@ -20,10 +20,13 @@ static void DumpInfo()
 	puts((char*)glGetString(GL_RENDERER));
 	puts((char*)glGetString(GL_VENDOR));
 	puts((char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
-	const GLubyte* ext = glGetString(GL_EXTENSIONS);
-	do {
-		printf("%c", *ext == ' ' ? '\n' : *ext);
-	}while(*ext++);
+
+	GLint num;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &num);
+	for (int i = 0; i < num; i++) {
+		const GLubyte* ext = glGetStringi(GL_EXTENSIONS, i);
+		printf("%s\n", ext);
+	}
 }
 
 static void APIENTRY debugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
